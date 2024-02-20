@@ -36,3 +36,43 @@
     transform: rotate(360deg);
   }
 }
+.app {
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #555;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.toggle-button {
+  background: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.app.open .sidebar {
+  transform: translateX(-200px);
+}
