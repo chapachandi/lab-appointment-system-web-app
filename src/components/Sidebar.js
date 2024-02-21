@@ -16,7 +16,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 
-import Appointment from '../pages/Appointment'
+import Appointment from '../pages/appointment/Appointment'
 
 const drawerWidth = 240;
 
