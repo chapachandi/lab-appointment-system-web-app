@@ -77,3 +77,9 @@
     margin-top: 15px !important;
     margin-bottom: 15px !important; 
   }
+
+  .signUpLink {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none !important;
+  }

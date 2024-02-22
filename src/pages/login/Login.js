@@ -73,9 +73,12 @@ const Login = () => {
               {/* Forgot Password Link */}
               <Typography className="pharagraph">Do you haven't account please sign up</Typography>
 
-              <Button variant="contained" fullWidth className="signUpButton">
+              {/* <Button variant="contained" fullWidth className="signUpButton">
                 Sign Up
-              </Button>
+              </Button> */}
+              <Typography variant="body2" className="paragraph">
+                Don't have an account? <Link href="#" className="signUpLink">Sign Up</Link>
+              </Typography>
 
             </div>
           </Grid>
