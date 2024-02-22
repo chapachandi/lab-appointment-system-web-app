@@ -1,6 +1,7 @@
 // AppointmentPage.js
 import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, MenuItem, Paper } from '@mui/material';
+import './style.css'; // Import common styles
 
 const AppointmentPage = () => {
   const [open, setOpen] = useState(false);
@@ -10,6 +11,7 @@ const AppointmentPage = () => {
     doctorReceiptImage: null,
     testDropdown: '',
   });
+  const [errors, setErrors] = useState({});
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -17,19 +19,46 @@ const AppointmentPage = () => {
 
   const handleClose = () => {
     setOpen(false);
+    // Clear errors when closing the dialog
+    setErrors({});
   };
 
   const handleDone = () => {
+    // Validate before submitting appointment
+    const validationErrors = {};
+
+    if (!appointmentDetails.date) {
+      validationErrors.date = 'Date is required.';
+    }
+
+    if (!appointmentDetails.time) {
+      validationErrors.time = 'Time is required.';
+    }
+
+    if (!appointmentDetails.testDropdown) {
+      validationErrors.testDropdown = 'Test selection is required.';
+    }
+
+    // If there are validation errors, set them and prevent submission
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     // Handle appointment submission and show success message
     console.log('Appointment submitted:', appointmentDetails);
     setOpen(false);
+    // Clear errors after successful submission
+    setErrors({});
   };
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={handleClickOpen} style={{ float: 'right', marginTop: '10px' }}>
+      <Button variant="contained" onClick={handleClickOpen} className="newAppointmentButton">
         New Appointment
       </Button>
+
+      {/* Dialog for New Appointment */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>New Appointment</DialogTitle>
         <DialogContent>
@@ -43,6 +72,8 @@ const AppointmentPage = () => {
             type="date"
             fullWidth
             onChange={(e) => setAppointmentDetails({ ...appointmentDetails, date: e.target.value })}
+            error={!!errors.date}
+            helperText={errors.date}
           />
           <TextField
             margin="normal"
@@ -51,6 +82,8 @@ const AppointmentPage = () => {
             type="time"
             fullWidth
             onChange={(e) => setAppointmentDetails({ ...appointmentDetails, time: e.target.value })}
+            error={!!errors.time}
+            helperText={errors.time}
           />
           <TextField
             margin="normal"
@@ -60,19 +93,12 @@ const AppointmentPage = () => {
             fullWidth
             value={appointmentDetails.testDropdown}
             onChange={(e) => setAppointmentDetails({ ...appointmentDetails, testDropdown: e.target.value })}
+            error={!!errors.testDropdown}
+            helperText={errors.testDropdown}
           >
             <MenuItem value="test1">Test 1</MenuItem>
             <MenuItem value="test2">Test 2</MenuItem>
           </TextField>
-          <TextField
-            margin="normal"
-            id="doctorReceiptImage"
-            label="Doctor Receipt Image (upload)"
-            type="file"
-            fullWidth
-            InputLabelProps={{ shrink: true }}
-            onChange={(e) => setAppointmentDetails({ ...appointmentDetails, doctorReceiptImage: e.target.files[0] })}
-          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -86,7 +112,7 @@ const AppointmentPage = () => {
 
       {/* Display Appointment Details */}
       <h2>Appointment Details</h2>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} className="appointmentTable">
         <Table>
           <TableHead>
             <TableRow>

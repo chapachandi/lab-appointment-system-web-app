@@ -13,7 +13,8 @@ function App() {
     <Router>
       <div className="App">
         {/* <Login /> */}
-        <Registration/>
+        {/* <Registration/> */}
+        <Sidebar/>
         <Routes>
           {/* <Route path="/" element={<Login />} /> */}
           <Route path="/appointment" element={<Inbox />} />
