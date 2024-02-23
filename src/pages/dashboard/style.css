@@ -1,0 +1,27 @@
+/* style.css */
+
+.dashboard-card {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+  }
+  
+  .hedear {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  .pharagraph {
+    color: #073a75 !important;
+    line-height: 1.6;
+    font-size: 12px;
+  }
+  
+  .note {
+    color: #e60f0f !important;
+    line-height: 1.6;
+    font-size: 12px;
+  }

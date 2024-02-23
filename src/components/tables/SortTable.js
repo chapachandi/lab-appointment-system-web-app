@@ -31,7 +31,12 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        <TableCell 
+            padding="checkbox" 
+            sx={{
+                backgroundColor: 'rgba(224, 224, 224, 1)',
+                color: 'rgb(59 55 55 / 87%'
+            }}>
           <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -48,6 +53,10 @@ function EnhancedTableHead(props) {
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{
+                backgroundColor: 'rgba(224, 224, 224, 1)',
+                color: 'rgb(59 55 55 / 87%'
+            }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}

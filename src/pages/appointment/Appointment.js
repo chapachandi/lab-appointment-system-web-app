@@ -129,6 +129,7 @@ const AppointmentPage = () => {
          { id: 'patientName', numeric: false, disablePadding: true, label: 'Patient Name' },
          { id: 'dateTime', numeric: false, disablePadding: false, label: 'Date Time' },
          { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
+         { id: 'payment', numeric: false, disablePadding: false, label: 'Payment' },
        ]}
        title="Appointment Details"
        initialOrder="asc"

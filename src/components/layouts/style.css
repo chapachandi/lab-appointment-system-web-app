@@ -59,4 +59,9 @@ body {
   }
   
   /* Additional styles for specific components or pages can be added as needed */
-  
+.list {
+  /* background-color: rgb(156 202 247 / 36%); */
+  height: 100vh;
+  color: #999999;
+  padding-top: 40px;
+}

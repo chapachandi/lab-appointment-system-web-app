@@ -13,16 +13,27 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import EventIcon from '@mui/icons-material/Event';import MailIcon from '@mui/icons-material/Mail';
-import './style.css'; // Import common styles
+
+import './style.css';
+import Logo from '../../assets/images (1).png'; 
+
 import Appointment from '../../pages/appointment/Appointment';
-import Logo from '../../assets/images (1).png'; // Replace with the actual path to your laboratory image
+import Dashboard from '../../pages/dashboard/Dashboard';
+import Account from '../../pages/account/User';
+import Report from '../../pages/reports/Report';
+
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import EventIcon from '@mui/icons-material/Event';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import PersonIcon from '@mui/icons-material/Person';
 
 const drawerWidth = 240;
 
 const pages = [
-  { label: 'Appointment', icon: <EventIcon />, path: '/appointment' },
-  { label: 'Starred', icon: <MailIcon />, path: '/starred' },
+  { label: 'Dashboard', icon: <DashboardIcon style={{ color: '#999999'}}/>, path: '/dashboard' },
+  { label: 'Appointment', icon: <EventIcon style={{ color: '#999999'}}/>, path: '/appointment' },
+  { label: 'Reports', icon: <FileDownloadIcon style={{ color: '#999999'}}/>, path: '/report' },
+  { label: 'Account', icon: <PersonIcon style={{ color: '#999999'}}/>, path: '/account' },
   // Add more pages as needed
 ];
 
@@ -75,7 +86,7 @@ export default function Sidebar() {
           /> */}
         </Toolbar>
         <Divider />
-        <List>
+        <List className='list'>
           {pages.map((page) => (
             <ListItem
               key={page.label}
@@ -94,12 +105,15 @@ export default function Sidebar() {
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: '#f5f5r3', p: 3, height: '100%' }}
+        sx={{ flexGrow: 1, bgcolor: 'rgb(243 243 243)', p: 3, height: '100vh' }}
       >
         <Toolbar />
         {/* Render content based on the selectedPage */}
+        {selectedPage === '/dashboard' && <Dashboard/>}
         {selectedPage === '/appointment' && <Appointment />}
-        {selectedPage === '/starred' && <div>Starred Page Content</div>}
+        {selectedPage === '/report' && <Report/>}
+        {selectedPage === '/account' && <Account />}
+
         {/* Add more conditions for additional pages */}
       </Box>
     </Box>
