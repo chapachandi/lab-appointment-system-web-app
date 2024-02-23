@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, MenuItem, Paper } from '@mui/material';
 import './style.css'; // Import common styles
+import TableSortAndSelection from '../../components/tables/SortTable'
 
 const AppointmentPage = () => {
   const [open, setOpen] = useState(false);
@@ -12,6 +13,7 @@ const AppointmentPage = () => {
     testDropdown: '',
   });
   const [errors, setErrors] = useState({});
+  const [appointments, setAppointments] = useState([]); // State to store appointment data
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -46,11 +48,20 @@ const AppointmentPage = () => {
     }
 
     // Handle appointment submission and show success message
+    const newAppointment = {
+      patientName: 'John Doe', // You can replace this with actual patient name
+      dateTime: `${appointmentDetails.date} ${appointmentDetails.time}`,
+      status: 'Pending',
+    };
+
+    setAppointments((prevAppointments) => [...prevAppointments, newAppointment]);
+
     console.log('Appointment submitted:', appointmentDetails);
     setOpen(false);
     // Clear errors after successful submission
     setErrors({});
   };
+
 
   return (
     <div>
@@ -112,7 +123,22 @@ const AppointmentPage = () => {
 
       {/* Display Appointment Details */}
       <h2>Appointment Details</h2>
-      <TableContainer component={Paper} className="appointmentTable">
+      <TableSortAndSelection 
+       data={appointments}
+       headCells={[
+         { id: 'patientName', numeric: false, disablePadding: true, label: 'Patient Name' },
+         { id: 'dateTime', numeric: false, disablePadding: false, label: 'Date Time' },
+         { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
+       ]}
+       title="Appointment Details"
+       initialOrder="asc"
+       initialOrderBy="dateTime"
+       rowsPerPageOptions={[5, 10, 25]}
+       densePadding={false}
+     
+      />
+      
+      {/* <TableContainer component={Paper} className="appointmentTable">
         <Table>
           <TableHead>
             <TableRow>
@@ -124,7 +150,7 @@ const AppointmentPage = () => {
           </TableHead>
           <TableBody>
             {/* Map over actual appointment data */}
-            <TableRow>
+            {/* <TableRow>
               <TableCell>John Doe</TableCell>
               <TableCell>{appointmentDetails.date} {appointmentDetails.time}</TableCell>
               <TableCell>Pending</TableCell>
@@ -134,7 +160,7 @@ const AppointmentPage = () => {
             </TableRow>
           </TableBody>
         </Table>
-      </TableContainer>
+      // </TableContainer> */} 
     </div>
   );
 };

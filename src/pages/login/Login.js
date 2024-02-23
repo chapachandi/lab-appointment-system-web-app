@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, OutlinedInput, InputAdornment, IconButton, Button, Typography, Container, Grid, Link } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material'; // Import the visibility icons
 import './style.css';
-import LaboratoryImage from '../../assets/experiment-biotechnology-with-chemistry-science.jpg'; // Replace with the actual path to your laboratory image
+import LaboratoryImage from '../../assets/cdc-XLhDvfz0sUM-unsplash.jpg'; // Replace with the actual path to your laboratory image
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,16 +19,16 @@ const Login = () => {
           <Grid item xs={6} className="leftSide">
             {/* You can add any additional styling for the left side here */}
             <Box
-        sx={{
-          width: '100%',
-          height: '100%',
-          backgroundImage: `url(${LaboratoryImage})`,
-          backgroundPosition: 'center',
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          filter: 'blur(1px)', // Adjust the blur intensity as needed
-        }}
-      />
+              sx={{
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${LaboratoryImage})`,
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                filter: 'blur(1px)', // Adjust the blur intensity as needed
+              }}
+            />
           </Grid>
 
           {/* Right Side - White Background */}
