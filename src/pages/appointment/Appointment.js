@@ -15,6 +15,22 @@ const AppointmentPage = () => {
   const [errors, setErrors] = useState({});
   const [appointments, setAppointments] = useState([]); // State to store appointment data
 
+  const timeSlots = [
+    '09:00 AM',
+    '10:00 AM',
+    '11:00 AM',
+    '02:00 PM',
+    '03:00 PM',
+    '04:00 PM',
+  ];
+
+  const tests = [
+    'Blood',
+    'Urine',
+    'ECG',
+    'Lab Test'
+  ];
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -70,7 +86,7 @@ const AppointmentPage = () => {
       </Button>
 
       {/* Dialog for New Appointment */}
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} className="appointmentPopup">
         <DialogTitle>New Appointment</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -78,8 +94,18 @@ const AppointmentPage = () => {
           </DialogContentText>
           <TextField
             margin="normal"
+            id="patientId"
+            label="Patient ID"
+            fullWidth
+            value={appointmentDetails.patientId}
+            onChange={(e) => setAppointmentDetails({ ...appointmentDetails, patientId: e.target.value })}
+            error={!!errors.patientId}
+            helperText={errors.patientId}
+          />
+          <TextField
+            margin="normal"
             id="date"
-            label="Appointment Date"
+            // label="Appointment Date"
             type="date"
             fullWidth
             onChange={(e) => setAppointmentDetails({ ...appointmentDetails, date: e.target.value })}
@@ -87,15 +113,23 @@ const AppointmentPage = () => {
             helperText={errors.date}
           />
           <TextField
-            margin="normal"
-            id="time"
-            label="Appointment Time"
-            type="time"
-            fullWidth
-            onChange={(e) => setAppointmentDetails({ ...appointmentDetails, time: e.target.value })}
-            error={!!errors.time}
-            helperText={errors.time}
-          />
+        margin="normal"
+        id="time"
+        type="time"
+        fullWidth
+        select
+        label="Select Time"
+        value={appointmentDetails.time}
+        onChange={(e) => setAppointmentDetails({ ...appointmentDetails, time: e.target.value })}
+        error={!!errors.time}
+        helperText={errors.time}
+      >
+        {timeSlots.map((slot) => (
+          <MenuItem key={slot} value={slot} disabled={/* Add your logic to disable specific time slots */ false}>
+            {slot}
+          </MenuItem>
+        ))}
+      </TextField>
           <TextField
             margin="normal"
             id="testDropdown"
@@ -107,15 +141,18 @@ const AppointmentPage = () => {
             error={!!errors.testDropdown}
             helperText={errors.testDropdown}
           >
-            <MenuItem value="test1">Test 1</MenuItem>
-            <MenuItem value="test2">Test 2</MenuItem>
+             {tests.map((test) => (
+               <MenuItem key={test} value={test} disabled={/* Add your logic */ false}>
+                {test}
+              </MenuItem>
+            ))}
           </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleDone} color="primary">
+          <Button variant="contained" onClick={handleDone} color="primary"  className="doneButton">
             Done
           </Button>
         </DialogActions>
@@ -126,16 +163,17 @@ const AppointmentPage = () => {
       <TableSortAndSelection 
        data={appointments}
        headCells={[
-         { id: 'patientName', numeric: false, disablePadding: true, label: 'Patient Name' },
-         { id: 'dateTime', numeric: false, disablePadding: false, label: 'Date Time' },
+         { id: 'patientId', numeric: false, disablePadding: true, label: 'Patient ID' },
+         { id: 'date', numeric: false, disablePadding: false, label: 'Date' },
+         { id: 'time', numeric: false, disablePadding: false, label: 'Time' },
          { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
-         { id: 'payment', numeric: false, disablePadding: false, label: 'Payment' },
+         { id: 'appointmentNumber', numeric: false, disablePadding: false, label: 'Appointment Number' },
        ]}
        title="Appointment Details"
        initialOrder="asc"
-       initialOrderBy="dateTime"
+      //  initialOrderBy="dateTime"
        rowsPerPageOptions={[5, 10, 25]}
-       densePadding={false}
+       densePadding={true}
      
       />
       

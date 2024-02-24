@@ -5,7 +5,16 @@
     background-color: #14A3C7 !important;
     color: #fff;
   }
-  
+
+  .doneButton {
+    float: right;
+    margin-top: 10px;
+    background-color: #14A3C7 !important;
+    color: #fff;
+  }
+  .css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+    padding: 20px !important;
+  }
   .appointmentTable {
     margin-top: 20px;
   }
