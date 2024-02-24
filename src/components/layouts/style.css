@@ -1,0 +1,67 @@
+/* style.css */
+
+/* Apply styles to the overall page layout */
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Styles for the app bar at the top */
+  AppBar {
+    background-color: #2196F3;
+  }
+  
+  /* Styles for the toolbar within the app bar */
+  Toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+  }
+  
+  /* Styles for the drawer */
+  Drawer {
+    width: 240px;
+    flex-shrink: 0;
+  }
+  
+  /* Styles for the drawer paper */
+  .MuiDrawer-paper {
+    width: 240px;
+    box-sizing: border-box;
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  /* Styles for the list items in the drawer */
+  ListItem {
+    cursor: pointer;
+    &:hover {
+      background-color: #1565C0; /* Darken the background on hover */
+    }
+  }
+  
+  /* Styles for the selected list item */
+  ListItem.selected {
+    background-color: #0D47A1;
+  }
+  
+  /* Styles for the list item text */
+  ListItemText {
+    color: white;
+  }
+  
+  /* Styles for the main content area */
+  main {
+    flex-grow: 1;
+    background-color: #f9f9f9;
+    padding: 20px;
+  }
+  
+  /* Additional styles for specific components or pages can be added as needed */
+.list {
+  /* background-color: rgb(156 202 247 / 36%); */
+  height: 100vh;
+  color: #999999;
+  padding-top: 40px;
+}

@@ -1,0 +1,85 @@
+.css-11lq3yg-MuiGrid-root {
+    width: 100%;
+    height: 100% !important;
+}
+.container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    background-color: #3498db;
+  }
+  
+  .leftSide {
+    height: 100%;
+    background-color: #3498db;
+  }
+  
+  .rightSide {
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .formContainer {
+    width: 50%;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .title {
+    margin-bottom: 20px !important;
+  }
+  
+  .input {
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border-color: #BDC3C7;
+    height: 40px;
+    padding: 8px;
+    background-color: transparent !important; 
+  }
+  
+  .forgotPassword {
+    color: #3498db;
+    text-align: right;
+    display: block;
+    margin-bottom: 15px !important;
+    text-decoration: none !important;
+  }
+  
+  .loginButton {
+    border-radius: 5px;
+    background-color: #3498db;
+    color: #fff;
+  }
+  
+  .googleLoginButton {
+    border-radius: 5px;
+    border-color: #BDC3C7;
+    color: #BDC3C7;
+    margin-top: 15px !important;
+    margin-bottom: 15px !important; 
+  }
+  
+  .signUpButton {
+    border-radius: 5px;
+    background-color: rgb(231 237 243 / 24%) !important;
+    color: #3498db !important;
+    margin-top: 15px !important;
+    margin-bottom: 15px !important; 
+  }
+
+  .pharagraph {
+    color: #BDC3C7;
+    margin-top: 15px !important;
+    margin-bottom: 15px !important; 
+  }
+
+  .signUpLink {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none !important;
+  }

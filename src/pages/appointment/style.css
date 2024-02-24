@@ -1,0 +1,38 @@
+/* style.css */
+.newAppointmentButton {
+    float: right;
+    margin-top: 10px;
+    background-color: #14A3C7 !important;
+    color: #fff;
+  }
+
+  .doneButton {
+    float: right;
+    margin-top: 10px;
+    background-color: #14A3C7 !important;
+    color: #fff;
+  }
+  .css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+    padding: 20px !important;
+  }
+  .appointmentTable {
+    margin-top: 20px;
+  }
+  
+  /* Additional styling for the table, adjust as needed */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
