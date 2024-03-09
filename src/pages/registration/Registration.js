@@ -1,23 +1,63 @@
-// src/Registration.js
 import React, { useState } from 'react';
-import { Box, OutlinedInput, InputAdornment, IconButton, Button, Typography, Container, Alert, Grid, Link } from '@mui/material';
+import {
+  Box,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  Button,
+  Typography,
+  Container,
+  Alert,
+  Grid,
+  Select,
+  MenuItem,
+  Link as MuiLink, // Rename Link to avoid conflict with React Router's Link
+} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Link as ReactRouterLink } from 'react-router-dom';
 import './style.css'; // Import common styles
 import LaboratoryImage from '../../assets/experiment-biotechnology-with-chemistry-science.jpg'; // Replace with the actual path to your laboratory image
 
+const roles = [
+  { id: 1, value: 'ROLE_USER', label: 'User' },
+  { id: 2, value: 'ROLE_ADMIN', label: 'Admin' },
+  // Add other roles as needed
+];
+
 const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
+  // const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [role, setRole] = useState( { id: 1, value: 'ROLE_USER', label: 'User' });
+
+  const handleRoleChange = (event) => {
+    console.log(event.target.value);
+    setRole(event.target.value);
+  };  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  // const handleNameChange = (event) => {
+  //   setName(event.target.value);
+  // };
+
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
+  };
+
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handleMobileNumberChange = (event) => {
+    setMobileNumber(event.target.value);
   };
 
   const handlePasswordChange = (event) => {
@@ -30,7 +70,7 @@ const Registration = () => {
 
   const handleRegister = () => {
     // Basic validation
-    if (!email || !password || !confirmPassword) {
+    if ( !email || !username || !mobileNumber || !password || !confirmPassword) {
       setError('All fields are required.');
       return;
     }
@@ -54,14 +94,44 @@ const Registration = () => {
       return;
     }
 
-    // Registration logic (submit the form, API call, etc.)
-    console.log('Registering...', { email, password });
-    // Reset error state after successful registration
+    // Clear error state if everything is valid
     setError('');
+
+    // Prepare the user data for the API request
+    const userData = {
+      username,
+      email,
+      mobileNumber,
+      password,
+      role
+    };
+
+    console.log(userData);
+
+    fetch('http://localhost:8080/api/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+      .then((response) => {
+        if (response.status === 201) {
+          // Successful registration
+          console.log('Registration successful:', userData);
+          // Optionally, redirect to the login page or handle success
+        } else {
+          // Handle other response statuses (e.g., display an error message)
+          throw new Error('Registration failed');
+        }
+      })
+      .catch((error) => {
+        // Handle registration error
+        setError('Registration failed');
+      });
   };
 
   return (
-
     <Box>
       <Container maxWidth="100%" className="container">
         <Grid container>
@@ -69,88 +139,147 @@ const Registration = () => {
           <Grid item xs={6} className="leftSide">
             {/* You can add any additional styling for the left side here */}
             <Box
-        sx={{
-          width: '100%',
-          height: '100%',
-          backgroundImage: `url(${LaboratoryImage})`,
-          backgroundPosition: 'center',
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          filter: 'blur(1px)', // Adjust the blur intensity as needed
-        }}
-      />
+              sx={{
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${LaboratoryImage})`,
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                filter: 'blur(1px)', // Adjust the blur intensity as needed
+              }}
+            />
           </Grid>
 
           {/* Right Side - White Background */}
           <Grid item xs={6} className="rightSide">
-          <div className="formContainer">
-      {/* Title */}
-      <Typography variant="h4" className="title">Sign Up</Typography>
+            <div className="formContainer">
+              {/* Title */}
+              <Typography variant="h4" className="title">
+                Sign Up
+              </Typography>
 
-      {/* Email Input */}
-      <OutlinedInput
-        placeholder="Email"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        className="input"
-        onChange={handleEmailChange}
-      />
+              {/* Name Input */}
+              {/* <OutlinedInput
+                placeholder="Full Name"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                className="input"
+                onChange={handleNameChange}
+              /> */}
 
-      {/* Password Input */}
-      <OutlinedInput
-        placeholder="Create Password"
-        type={showPassword ? 'text' : 'password'}
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        className="input"
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton onClick={togglePasswordVisibility} edge="end">
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </InputAdornment>
-        }
-        onChange={handlePasswordChange}
-      />
+              {/* Email Input */}
+              <OutlinedInput
+                placeholder="Email"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                className="input"
+                onChange={handleEmailChange}
+              />
 
-      {/* Confirm Password Input */}
-      <OutlinedInput
-        placeholder="Confirm Password"
-        type={showPassword ? 'text' : 'password'}
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        className="input"
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton onClick={togglePasswordVisibility} edge="end">
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </InputAdornment>
-        }
-        onChange={handleConfirmPasswordChange}
-      />
+              {/* Username Input */}
+              <OutlinedInput
+                placeholder="Username"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                className="input"
+                onChange={handleUsernameChange}
+              />
 
-      {/* Display validation error */}
-      {error && <Alert severity="error">{error}</Alert>}
+              {/* Mobile Number Input */}
+              <OutlinedInput
+                placeholder="Mobile Number"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                className="input"
+                onChange={handleMobileNumberChange}
+              />
 
-      {/* Registration Button */}
-      <Button variant="contained" color="primary" fullWidth className="loginButton" onClick={handleRegister}>
-        Sign Up
-      </Button>
+              {/* Password Input */}
+              <OutlinedInput
+                placeholder="Create Password"
+                type={showPassword ? 'text' : 'password'}
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                className="input"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                onChange={handlePasswordChange}
+              />
 
-      {/* Already have an account? Login Link */}
-      <Typography variant="body2" className="paragraph">
-        Already have an account? <Link href="#" className="signInLink">Sign In</Link>
-      </Typography>
-    </div>
+              {/* Confirm Password Input */}
+              <OutlinedInput
+                placeholder="Confirm Password"
+                type={showPassword ? 'text' : 'password'}
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                className="input"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                onChange={handleConfirmPasswordChange}
+              />
+              {/* Role Dropdown */}
+              <Select
+                placeholder="Select Role"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                className="input"
+                select
+                value={role}
+                onChange={handleRoleChange}
+              >
+                {roles.map((roleOption) => (
+                  <MenuItem key={roleOption.id} value={roleOption}>
+                    {roleOption.label}
+                  </MenuItem>
+                ))}
+              </Select>
+
+
+              {/* Display validation error */}
+              {error && <Alert severity="error">{error}</Alert>}
+
+              {/* Registration Button */}
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                className="loginButton"
+                onClick={handleRegister}
+              >
+                Sign Up
+              </Button>
+
+              {/* Already have an account? Login Link */}
+              <Typography variant="body2" className="paragraph">
+                Already have an account?{' '}
+                {/* Use React Router's Link to navigate to the login page */}
+                <MuiLink component={ReactRouterLink} to="/" className="signInLink">
+                  Sign In
+                </MuiLink>
+          </Typography>
+            </div>
           </Grid>
         </Grid>
       </Container>
     </Box>
-   
   );
 };
 
