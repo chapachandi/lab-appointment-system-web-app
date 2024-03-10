@@ -19,34 +19,34 @@ import './style.css'; // Import common styles
 import LaboratoryImage from '../../assets/experiment-biotechnology-with-chemistry-science.jpg'; // Replace with the actual path to your laboratory image
 
 const roles = [
-  { id: 1, value: 'ROLE_USER', label: 'User' },
-  { id: 2, value: 'ROLE_ADMIN', label: 'Admin' },
+  { id: 1, value: 'ROLE_USER' },
+  { id: 2, value: 'ROLE_ADMIN' },
   // Add other roles as needed
 ];
 
 const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
-  // const [name, setName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [role, setRole] = useState( { id: 1, value: 'ROLE_USER', label: 'User' });
+  // const [role, setRole] = useState( { id: 1, value: 'ROLE_USER' });
 
-  const handleRoleChange = (event) => {
-    console.log(event.target.value);
-    setRole(event.target.value);
-  };  
+  // const handleRoleChange = (event) => {
+  //   console.log(event.target.value);
+  //   setRole(event.target.value);
+  // };  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // const handleNameChange = (event) => {
-  //   setName(event.target.value);
-  // };
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -99,16 +99,16 @@ const Registration = () => {
 
     // Prepare the user data for the API request
     const userData = {
+      name,
       username,
       email,
       mobileNumber,
       password,
-      role
     };
 
     console.log(userData);
 
-    fetch('http://localhost:8080/api/auth/signup', {
+    fetch('http://localhost:8080/api/user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -160,14 +160,14 @@ const Registration = () => {
               </Typography>
 
               {/* Name Input */}
-              {/* <OutlinedInput
+              <OutlinedInput
                 placeholder="Full Name"
                 variant="outlined"
                 fullWidth
                 margin="normal"
                 className="input"
                 onChange={handleNameChange}
-              /> */}
+              />
 
               {/* Email Input */}
               <OutlinedInput
@@ -235,7 +235,7 @@ const Registration = () => {
                 onChange={handleConfirmPasswordChange}
               />
               {/* Role Dropdown */}
-              <Select
+              {/* <Select
                 placeholder="Select Role"
                 variant="outlined"
                 fullWidth
@@ -247,10 +247,10 @@ const Registration = () => {
               >
                 {roles.map((roleOption) => (
                   <MenuItem key={roleOption.id} value={roleOption}>
-                    {roleOption.label}
+                    {roleOption.value === 'ROLE_USER' ? 'User' : 'Admin'}
                   </MenuItem>
                 ))}
-              </Select>
+              </Select> */}
 
 
               {/* Display validation error */}

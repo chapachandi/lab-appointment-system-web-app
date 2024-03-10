@@ -30,19 +30,19 @@ import PersonIcon from '@mui/icons-material/Person';
 const drawerWidth = 240;
 
 const pages = [
-  { label: 'Dashboard', icon: <DashboardIcon style={{ color: '#999999'}}/>, path: '/dashboard' },
-  { label: 'Appointment', icon: <EventIcon style={{ color: '#999999'}}/>, path: '/appointment' },
+  { label: 'Dashboard', icon: <DashboardIcon style={{ color: '#999999 !important'}}/>, path: '/dashboard' },
+  { label: 'Appointment', icon: <EventIcon style={{ color: '#999999 !important'}}/>, path: '/appointment' },
   { label: 'Reports', icon: <FileDownloadIcon style={{ color: '#999999'}}/>, path: '/report' },
   { label: 'Account', icon: <PersonIcon style={{ color: '#999999'}}/>, path: '/account' },
   // Add more pages as needed
 ];
 
 export default function Sidebar() {
-  const [selectedPage, setSelectedPage] = useState('/appointment');
+  const [selectedPage, setSelectedPage] = useState('/dashboard');
   const navigate = useNavigate();
 
   const handlePageChange = (path) => {
-    setSelectedPage(path);
+    setSelectedPage(path.replace('/home', '')); 
     navigate(path);
   };
 
@@ -71,7 +71,7 @@ export default function Sidebar() {
         variant="permanent"
         anchor="left"
       >
-        <Toolbar s>
+        <Toolbar sx={{ s: 'true' }}>
         <img src={Logo} alt="logo" style={{width:'200px'}}/>
           {/* <Box
             sx={{
@@ -92,7 +92,9 @@ export default function Sidebar() {
               key={page.label}
               disablePadding
               selected={selectedPage === page.path}
-              onClick={() => handlePageChange(page.path)}
+              onClick={() => handlePageChange(`/home${page.path}`)}
+              component={Link}
+              to={`/home${page.path}`}
             >
               <ListItemButton>
                 <ListItemIcon>{page.icon}</ListItemIcon>
@@ -104,8 +106,8 @@ export default function Sidebar() {
         <Divider />
       </Drawer>
       <Box
-        component="main"
-        sx={{ flexGrow: 1, bgcolor: 'rgb(243 243 243)', p: 3, height: '100vh' }}
+         component="main"
+         sx={{ flexGrow: 1, bgcolor: 'rgb(243 243 243)', p: 3, height: '100vh' }}
       >
         <Toolbar />
         {/* Render content based on the selectedPage */}

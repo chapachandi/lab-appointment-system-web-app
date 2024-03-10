@@ -6,11 +6,11 @@ import { Link as ReactRouterLink } from 'react-router-dom';
 import './style.css';
 import LaboratoryImage from '../../assets/cdc-XLhDvfz0sUM-unsplash.jpg';
 
-const roles = [
-  { id: 1, value: 'ROLE_USER', label: 'User' },
-  { id: 2, value: 'ROLE_ADMIN', label: 'Admin' },
-  // Add other roles as needed
-];
+// const roles = [
+//   { id: 1, value: 'ROLE_USER', label: 'User' },
+//   { id: 2, value: 'ROLE_ADMIN', label: 'Admin' },
+//   // Add other roles as needed
+// ];
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,11 +18,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate(); // Initialize the useNavigate hook
-  const [role, setRole] = useState({ id: 1, value: 'ROLE_USER', label: 'User' });
+  // const [role, setRole] = useState({ id: 1, value: 'ROLE_USER', label: 'User' });
 
-  const handleRoleChange = (event) => {
-    setRole(event.target.value);
-  };
+  // const handleRoleChange = (event) => {
+  //   setRole(event.target.value);
+  // };
   
 
   const togglePasswordVisibility = () => {
@@ -45,12 +45,12 @@ const Login = () => {
     }
     
     // Send login request to the backend
-    fetch('http://localhost:8080/api/auth/signin', {
+    fetch('http://localhost:8080/api/user/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password, role }),
+      body: JSON.stringify({ email, password }),
     })
       .then((response) => {
         if (response.status === 200) {
@@ -99,7 +99,7 @@ const Login = () => {
               </Typography>
               {/* Role Dropdown */}
   
-              <Select
+              {/* <Select
                 placeholder="Select Role"
                 variant="outlined"
                 fullWidth
@@ -114,7 +114,7 @@ const Login = () => {
                     {roleOption.label}
                   </MenuItem>
                 ))}
-              </Select>
+              </Select> */}
               <OutlinedInput
                 placeholder="Email"
                 variant="outlined"
