@@ -1,35 +1,77 @@
-// AppointmentPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, MenuItem, Paper } from '@mui/material';
-import './style.css'; // Import common styles
+import './style.css'; 
 import TableSortAndSelection from '../../components/tables/SortTable'
 
 const AppointmentPage = () => {
   const [open, setOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
-    date: '',
+    customerId: '',
+    reservationDate: '',
     time: '',
-    doctorReceiptImage: null,
-    testDropdown: '',
+    testId: '',
+    timeSlotId: '', // Add timeSlotId to the state
   });
   const [errors, setErrors] = useState({});
-  const [appointments, setAppointments] = useState([]); // State to store appointment data
+  const [appointments, setAppointments] = useState([]); 
+  const [timeSlots, setTimeSlots] = useState([]);
+  console.log(appointments,'appointments')
 
-  const timeSlots = [
-    '09:00 AM',
-    '10:00 AM',
-    '11:00 AM',
-    '02:00 PM',
-    '03:00 PM',
-    '04:00 PM',
-  ];
+  useEffect(() => {
+    const testId = "1";
+    const reservingDate = "2024-04-01"; 
+  
+    const fetchTimeSlots = async () => {
+      console.log('Before fetching time slots');
+      try {
+        const response = await axios.post('http://localhost:8080/api/timeslot/getAvailableTimeSlot', {
+          testId,
+          reservingDate,
+        });
+        const data = response.data;
+        console.log(data);
+        setTimeSlots(data);
+      } catch (error) {
+        console.error('Error fetching time slots:', error);
+      }
+      console.log('After fetching time slots');
+    };
+  
+    fetchTimeSlots();
+  }, []);
 
-  const tests = [
-    'Blood',
-    'Urine',
-    'ECG',
-    'Lab Test'
-  ];
+  const [allTests, setAllTests] = useState([]);
+
+  useEffect(() => {
+    // Fetch all tests when the component mounts
+    console.log('+++++++++++++++++++++')
+    const fetchAllTests = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/test/getAll');
+        setAllTests(response.data);
+      } catch (error) {
+        console.error('Error fetching tests:', error);
+      }
+    };
+    console.log(allTests,'+++++++++++++++++++++')
+    fetchAllTests();
+  }, []);
+
+ 
+
+  useEffect(() => {
+    fetchAppointments();
+  }, []); 
+
+  const fetchAppointments = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/reservations');
+      setAppointments(response.data);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+    }
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -37,47 +79,71 @@ const AppointmentPage = () => {
 
   const handleClose = () => {
     setOpen(false);
-    // Clear errors when closing the dialog
     setErrors({});
   };
+//   const selectedTest = tests.find((test) => test.id === appointmentDetails.testId);
 
-  const handleDone = () => {
-    // Validate before submitting appointment
-    const validationErrors = {};
+// console.log(selectedTest)
 
-    if (!appointmentDetails.date) {
-      validationErrors.date = 'Date is required.';
-    }
+  const handleDone = async () => {
+  const validationErrors = {};
 
-    if (!appointmentDetails.time) {
-      validationErrors.time = 'Time is required.';
-    }
+  if (!appointmentDetails.reservationDate) {
+    validationErrors.reservationDate = 'Date is required.';
+  }
 
-    if (!appointmentDetails.testDropdown) {
-      validationErrors.testDropdown = 'Test selection is required.';
-    }
+  if (!appointmentDetails.timeSlotId) {
+    validationErrors.timeSlotId = 'Time slot is required.';
+  }
 
-    // If there are validation errors, set them and prevent submission
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  if (!appointmentDetails.testId) {
+    validationErrors.testId = 'Test selection is required.';
+  }
 
-    // Handle appointment submission and show success message
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
+  console.log('..................................');
+  
+  try {
+    // Assuming you get user data from somewhere
+    const user = { name: 'Chapa Chandi' };
+   
+    const selectedTest = allTests.find((test) => test.testId === appointmentDetails.testId);
+    console.log(selectedTest,'hi');
     const newAppointment = {
-      patientName: 'John Doe', // You can replace this with actual patient name
-      dateTime: `${appointmentDetails.date} ${appointmentDetails.time}`,
-      status: 'Pending',
+      description: selectedTest ? selectedTest.name : 'No Test',
+      reservationDate: appointmentDetails.reservationDate,
+      isActive: true,
+      isTested: false,
+      timeSlotId: appointmentDetails.timeSlotId,
+      testId: appointmentDetails.testId,
+      customerId: appointmentDetails.customerId, // Update customerId
     };
 
-    setAppointments((prevAppointments) => [...prevAppointments, newAppointment]);
+    const response = await axios.post('http://localhost:8080/api/reservations', newAppointment);
+  
+    // Log or use the response data as needed
+    console.log('Appointment submitted:', response.data);
 
-    console.log('Appointment submitted:', appointmentDetails);
+    fetchAppointments(); // Assuming you want to fetch updated appointments after submission
+
     setOpen(false);
-    // Clear errors after successful submission
     setErrors({});
-  };
+  } catch (error) {
+    console.error('Error submitting appointment:', error);
+  }
+};
+ // Transform appointments data to include displayText
+ const transformedAppointments = appointments.map((appointment) => {
+  const timeSlot = timeSlots.find((slot) => slot.timeSlotId === appointment.timeSlotId);
+  const displayText = timeSlot ? timeSlot.displayText : '';
+  const status = appointment.isActive ? 'Accepted' : 'Pending';
+  return { ...appointment, displayText, status };
+});
 
+console.log(transformedAppointments)
 
   return (
     <div>
@@ -97,62 +163,68 @@ const AppointmentPage = () => {
             id="patientId"
             label="Patient ID"
             fullWidth
-            value={appointmentDetails.patientId}
-            onChange={(e) => setAppointmentDetails({ ...appointmentDetails, patientId: e.target.value })}
-            error={!!errors.patientId}
-            helperText={errors.patientId}
+            value={appointmentDetails.customerId}
+            onChange={(e) => setAppointmentDetails({ ...appointmentDetails, customerId: e.target.value })}
+            error={!!errors.customerId}
+            helperText={errors.customerId}
           />
           <TextField
             margin="normal"
             id="date"
-            // label="Appointment Date"
             type="date"
             fullWidth
-            onChange={(e) => setAppointmentDetails({ ...appointmentDetails, date: e.target.value })}
-            error={!!errors.date}
-            helperText={errors.date}
+            onChange={(e) => setAppointmentDetails({ ...appointmentDetails, reservationDate: e.target.value })}
+            error={!!errors.reservationDate}
+            helperText={errors.reservationDate}
           />
           <TextField
-        margin="normal"
-        id="time"
-        type="time"
-        fullWidth
-        select
-        label="Select Time"
-        value={appointmentDetails.time}
-        onChange={(e) => setAppointmentDetails({ ...appointmentDetails, time: e.target.value })}
-        error={!!errors.time}
-        helperText={errors.time}
-      >
-        {timeSlots.map((slot) => (
-          <MenuItem key={slot} value={slot} disabled={/* Add your logic to disable specific time slots */ false}>
-            {slot}
-          </MenuItem>
-        ))}
-      </TextField>
-          <TextField
-            margin="normal"
-            id="testDropdown"
-            label="Test Dropdown"
-            select
-            fullWidth
-            value={appointmentDetails.testDropdown}
-            onChange={(e) => setAppointmentDetails({ ...appointmentDetails, testDropdown: e.target.value })}
-            error={!!errors.testDropdown}
-            helperText={errors.testDropdown}
-          >
-             {tests.map((test) => (
-               <MenuItem key={test} value={test} disabled={/* Add your logic */ false}>
-                {test}
-              </MenuItem>
-            ))}
-          </TextField>
+              margin="normal"
+              id="time"
+              type="time"
+              fullWidth
+              select
+              label="Select Time"
+              value={appointmentDetails.timeSlotId}  // Update this line
+              onChange={(e) => setAppointmentDetails({ ...appointmentDetails, timeSlotId: e.target.value })}  // Update this line
+              error={!!errors.timeSlotId}
+              helperText={errors.timeSlotId}
+            >
+              {timeSlots.map((slot) => (
+                <MenuItem key={slot.timeSlotId} value={slot.timeSlotId} disabled={!slot.isActive}>
+                  {slot.displayText}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+                margin="normal"
+                id="testDropdown"
+                label="Test Dropdown"
+                select
+                fullWidth
+                value={appointmentDetails.testId || ''}
+                onChange={(e) => {
+                  console.log('Selected value:', e.target.value);
+                  console.log('appointmentDetails.testId before update:', appointmentDetails.testId);
+                  setAppointmentDetails({ ...appointmentDetails, testId: e.target.value });
+                }}
+                error={!!errors.testId}
+                helperText={errors.testId}
+              >
+                {allTests.map((test) => (
+                  <MenuItem key={test.testId} value={test.testId}>
+                    {test.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleDone} color="primary"  className="doneButton">
+          <Button variant="contained" onClick={handleDone} color="primary" className="doneButton">
             Done
           </Button>
         </DialogActions>
@@ -160,46 +232,22 @@ const AppointmentPage = () => {
 
       {/* Display Appointment Details */}
       <h2>Appointment Details</h2>
-      <TableSortAndSelection 
-       data={appointments}
-       headCells={[
-         { id: 'patientId', numeric: false, disablePadding: true, label: 'Patient ID' },
-         { id: 'date', numeric: false, disablePadding: false, label: 'Date' },
-         { id: 'time', numeric: false, disablePadding: false, label: 'Time' },
-         { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
-         { id: 'appointmentNumber', numeric: false, disablePadding: false, label: 'Appointment Number' },
-       ]}
-       title="Appointment Details"
-       initialOrder="asc"
-      //  initialOrderBy="dateTime"
-       rowsPerPageOptions={[5, 10, 25]}
-       densePadding={true}
-     
-      />
-      
-      {/* <TableContainer component={Paper} className="appointmentTable">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Patient Name</TableCell>
-              <TableCell>Date Time</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Cancel</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {/* Map over actual appointment data */}
-            {/* <TableRow>
-              <TableCell>John Doe</TableCell>
-              <TableCell>{appointmentDetails.date} {appointmentDetails.time}</TableCell>
-              <TableCell>Pending</TableCell>
-              <TableCell>
-                <Button color="secondary">Cancel</Button>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      // </TableContainer> */} 
+     <TableSortAndSelection
+          data={transformedAppointments}
+          headCells={[
+            { id: 'reservationId', numeric: false, disablePadding: true, label: 'Appointment Number' },
+            { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
+            { id: 'reservationDate', numeric: false, disablePadding: false, label: 'Reservation Date' },
+            { id: 'displayText', numeric: false, disablePadding: false, label: 'Time Slot' },
+            { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
+          ]}
+          title="Appointment Details"
+          initialOrder="asc"
+          rowsPerPageOptions={[5, 10, 25]}
+          densePadding={true}
+          
+        />
+
     </div>
   );
 };

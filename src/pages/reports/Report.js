@@ -34,10 +34,26 @@ const ReportPage = () => {
   const [openPaymentPopup, setOpenPaymentPopup] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('creditCard');
 
-  const handleDownloadReport = (queueId, paymentStatus) => {
+  const handleDownloadReport = async (queueId, paymentStatus) => {
     if (paymentStatus) {
-      // Implement your logic to download the report
-      console.log(`Downloading report for queue ID ${queueId}`);
+      try {
+        const response = await fetch(`http://localhost:8080/api/invoice`);
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'report.pdf';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        } else {
+          console.error('Failed to download report:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching report:', error);
+      }
     } else {
       console.log(`Payment not made for queue ID ${queueId}. Cannot download report.`);
     }
