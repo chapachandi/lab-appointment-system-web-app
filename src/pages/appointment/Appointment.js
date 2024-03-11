@@ -3,11 +3,15 @@ import axios from 'axios';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, MenuItem, Paper } from '@mui/material';
 import './style.css'; 
 import TableSortAndSelection from '../../components/tables/SortTable'
+import { useSelector } from 'react-redux';
 
 const AppointmentPage = () => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const userId = useSelector((state) => state.auth.user?.id);
+
   const [open, setOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
-    customerId: '',
+    customerId: userId,
     reservationDate: '',
     time: '',
     testId: '',
@@ -16,7 +20,11 @@ const AppointmentPage = () => {
   const [errors, setErrors] = useState({});
   const [appointments, setAppointments] = useState([]); 
   const [timeSlots, setTimeSlots] = useState([]);
+
   console.log(appointments,'appointments')
+  console.log(isAuthenticated,'isAuthenticated')
+ 
+  
 
   useEffect(() => {
     const testId = "1";
@@ -60,13 +68,11 @@ const AppointmentPage = () => {
 
  
 
-  useEffect(() => {
-    fetchAppointments();
-  }, []); 
+ 
 
   const fetchAppointments = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/reservations');
+      const response = await axios.get(`http://localhost:8080/api/reservations/customerId/${userId}`);
       setAppointments(response.data);
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -142,8 +148,12 @@ const AppointmentPage = () => {
   const status = appointment.isActive ? 'Accepted' : 'Pending';
   return { ...appointment, displayText, status };
 });
-
+useEffect(() => {
+  console.log(userId,'userId')
+  fetchAppointments();
+}, [userId]);
 console.log(transformedAppointments)
+console.log(appointments)
 
   return (
     <div>
@@ -167,6 +177,7 @@ console.log(transformedAppointments)
             onChange={(e) => setAppointmentDetails({ ...appointmentDetails, customerId: e.target.value })}
             error={!!errors.customerId}
             helperText={errors.customerId}
+            disabled
           />
           <TextField
             margin="normal"
@@ -231,7 +242,7 @@ console.log(transformedAppointments)
       </Dialog>
 
       {/* Display Appointment Details */}
-      <h2>Appointment Details</h2>
+      <h2>Appointment Page</h2>
      <TableSortAndSelection
           data={transformedAppointments}
           headCells={[

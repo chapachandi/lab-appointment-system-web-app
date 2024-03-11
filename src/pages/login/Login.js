@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { Link as ReactRouterLink } from 'react-router-dom';
 import './style.css';
 import LaboratoryImage from '../../assets/cdc-XLhDvfz0sUM-unsplash.jpg';
+import { useDispatch } from 'react-redux';
+import { login } from '../../app/store/authSlice';
 
 // const roles = [
 //   { id: 1, value: 'ROLE_USER', label: 'User' },
@@ -18,12 +20,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate(); // Initialize the useNavigate hook
-  // const [role, setRole] = useState({ id: 1, value: 'ROLE_USER', label: 'User' });
-
-  // const handleRoleChange = (event) => {
-  //   setRole(event.target.value);
-  // };
-  
+  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -62,6 +59,9 @@ const Login = () => {
         }
       })
       .then((user) => {
+        // Dispatch the userId to the Redux store
+        dispatch(login({ id: user.data.userId, isAuthenticated: true }));
+        console.log(user.data.userId)
         // Handle successful login (e.g., redirect to dashboard)
         console.log('Login successful:', user);
         navigate('/home'); // Redirect to the dashboard

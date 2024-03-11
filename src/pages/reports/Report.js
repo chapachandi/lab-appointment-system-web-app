@@ -1,27 +1,11 @@
 import React, { useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-} from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import EnhancedTable from '../../components/tables/SortTable'; // Update the path accordingly
 import './style.css'; // Import the CSS file
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import PersonIcon from '@mui/icons-material/Person';
+import axios from 'axios';
 
 const ReportPage = () => {
   const [reportData, setReportData] = useState([
@@ -29,35 +13,43 @@ const ReportPage = () => {
     { queueId: '67890', testedDate: '2022-03-05', paymentStatus: false, totalCost: 30 },
     // Add more data as needed
   ]);
-// $("input[name='expiry-data']").mask("00 / 00");
+
   const [selectedRow, setSelectedRow] = useState(null);
   const [openPaymentPopup, setOpenPaymentPopup] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('creditCard');
 
-  const handleDownloadReport = async (queueId, paymentStatus) => {
-    if (paymentStatus) {
-      try {
-        const response = await fetch(`http://localhost:8080/api/invoice`);
-        if (response.ok) {
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'report.pdf';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        } else {
-          console.error('Failed to download report:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error fetching report:', error);
+ const handleDownloadReport = async (queueId, paymentStatus) => {
+  if (paymentStatus) {
+    try {
+      // Assuming you have a specific API endpoint for downloading reports
+      const response = await axios.get(`http://localhost:8080/api/finalResult/${queueId}`, {
+        responseType: 'blob', // Set the responseType to 'blob' for binary data
+      });
+
+      // Check if the request was successful
+      if (response.status === 200) {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link element and trigger a download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `report_${queueId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Release the object URL
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error('Failed to download report:', response.statusText);
       }
-    } else {
-      console.log(`Payment not made for queue ID ${queueId}. Cannot download report.`);
+    } catch (error) {
+      console.error('Error fetching report:', error);
     }
-  };
+  } else {
+    console.log(`Payment not made for queue ID ${queueId}. Cannot download report.`);
+  }
+};
 
   const handlePayNow = (row) => {
     setSelectedRow(row);
@@ -67,59 +59,53 @@ const ReportPage = () => {
   const handleClosePaymentPopup = () => {
     setOpenPaymentPopup(false);
     setSelectedRow(null);
-    setPaymentMethod('creditCard');
   };
+
+  // ... your existing code for payment popup ...
 
   const handleContinuePayment = () => {
-    // Implement logic to handle payment continuation based on paymentMethod
-    // For simplicity, just closing the payment popup in this example
-    handleClosePaymentPopup();
-  };
-
-  const handlePaymentMethodChange = (event) => {
-    setPaymentMethod(event.target.value);
+    // ... your existing logic for continuing payment ...
   };
 
   const handlePaymentDone = () => {
-    // Implement logic to mark the payment as done in your data
-    setReportData((prevReportData) =>
-      prevReportData.map((row) =>
-        row.queueId === selectedRow.queueId ? { ...row, paymentStatus: true } : row
-      )
-    );
-
+    // ... your existing logic for marking payment as done ...
     handleClosePaymentPopup();
   };
+
+  const headCells = [
+    { id: 'queueId', numeric: false, disablePadding: true, label: 'Patient ID' },
+    { id: 'testedDate', numeric: false, disablePadding: false, label: 'Tested Date' },
+    { id: 'paymentStatus', numeric: false, disablePadding: false, label: 'Report' },
+  ];
 
   return (
     <div className="report-page">
       <h1>Report Page</h1>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Patient Queue ID</TableCell>
-              <TableCell>Tested Date</TableCell>
-              <TableCell>Report</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {reportData.map((data) => (
-              <TableRow key={data.queueId}>
-                <TableCell>{data.queueId}</TableCell>
-                <TableCell>{data.testedDate}</TableCell>
-                <TableCell>
-                  {!data.paymentStatus ? (
-                    <Button onClick={() => handleDownloadReport(data.queueId, data.paymentStatus)}>
-                      Download Report
-                    </Button>
-                  ) : (
-                    <>
-                      <Button onClick={() => handlePayNow(data)}>Pay Now</Button>
-                      {/* Payment Popup */}
-                      <Dialog open={openPaymentPopup} onClose={handleClosePaymentPopup} className="paymentPopup">
-                       
+      <EnhancedTable
+        data={reportData}
+        headCells={headCells}
+        title="Report Details"
+        initialOrder="asc"
+        initialOrderBy="queueId"
+        rowsPerPageOptions={[5, 10, 25]}
+        densePadding={true}
+        renderRow={(row, index, labelId) => (
+          <TableRow hover tabIndex={-1} key={row.queueId}>
+            <TableCell component="th" id={labelId} scope="row" padding="checkbox">
+              {row.queueId}
+            </TableCell>
+            <TableCell align="left">{row.testedDate}</TableCell>
+            <TableCell align="left">
+              {!row.paymentStatus ? (
+                <Button onClick={() => handleDownloadReport(row.queueId, row.paymentStatus)}>
+                  Download Report
+                </Button>
+              ) : (
+                <>
+                  <Button onClick={() => handlePayNow(row)}>Pay Now</Button>
+                  {/* Payment Popup */}
+                  <Dialog open={openPaymentPopup} onClose={handleClosePaymentPopup} className="paymentPopup"> 
                        <div class="wrapper">
                           <div class="payment">
                             <h2>Payment Gateway</h2>
@@ -158,14 +144,12 @@ const ReportPage = () => {
                           </div>
                         </div>
                       </Dialog>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                </>
+              )}
+            </TableCell>
+          </TableRow>
+        )}
+      />
     </div>
   );
 };
