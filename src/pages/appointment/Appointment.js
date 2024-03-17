@@ -15,7 +15,7 @@ const AppointmentPage = () => {
     reservationDate: '',
     time: '',
     testId: '',
-    timeSlotId: '', // Add timeSlotId to the state
+    timeSlotId: '',
   });
   const [errors, setErrors] = useState({});
   const [appointments, setAppointments] = useState([]); 
@@ -23,7 +23,12 @@ const AppointmentPage = () => {
 
   console.log(appointments,'appointments')
   console.log(isAuthenticated,'isAuthenticated')
- 
+
+
+  useEffect(() => {
+    console.log(userId,'userId')
+    fetchAppointments();
+  }, [userId]);
   
 
   useEffect(() => {
@@ -123,9 +128,10 @@ const AppointmentPage = () => {
       reservationDate: appointmentDetails.reservationDate,
       isActive: true,
       isTested: false,
+      isPayed: false,
       timeSlotId: appointmentDetails.timeSlotId,
       testId: appointmentDetails.testId,
-      customerId: appointmentDetails.customerId, // Update customerId
+      userId: userId, 
     };
 
     const response = await axios.post('http://localhost:8080/api/reservations', newAppointment);
@@ -141,17 +147,16 @@ const AppointmentPage = () => {
     console.error('Error submitting appointment:', error);
   }
 };
- // Transform appointments data to include displayText
+
  const transformedAppointments = appointments.map((appointment) => {
   const timeSlot = timeSlots.find((slot) => slot.timeSlotId === appointment.timeSlotId);
   const displayText = timeSlot ? timeSlot.displayText : '';
   const status = appointment.isActive ? 'Accepted' : 'Pending';
   return { ...appointment, displayText, status };
 });
-useEffect(() => {
-  console.log(userId,'userId')
-  fetchAppointments();
-}, [userId]);
+
+
+
 console.log(transformedAppointments)
 console.log(appointments)
 
@@ -168,7 +173,7 @@ console.log(appointments)
           <DialogContentText>
             Please fill in the details for the new appointment.
           </DialogContentText>
-          <TextField
+          {/* <TextField
             margin="normal"
             id="patientId"
             label="Patient ID"
@@ -178,7 +183,7 @@ console.log(appointments)
             error={!!errors.customerId}
             helperText={errors.customerId}
             disabled
-          />
+          /> */}
           <TextField
             margin="normal"
             id="date"
@@ -247,7 +252,7 @@ console.log(appointments)
           data={transformedAppointments}
           headCells={[
             { id: 'reservationId', numeric: false, disablePadding: true, label: 'Appointment Number' },
-            { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
+            { id: 'description', numeric: false, disablePadding: false, label: 'Test' },
             { id: 'reservationDate', numeric: false, disablePadding: false, label: 'Reservation Date' },
             { id: 'displayText', numeric: false, disablePadding: false, label: 'Time Slot' },
             { id: 'status', numeric: false, disablePadding: false, label: 'Status' },

@@ -31,22 +31,24 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell 
-            padding="checkbox" 
-            sx={{
-                backgroundColor: 'rgba(224, 224, 224, 1)',
-                color: 'rgb(59 55 55 / 87%'
-            }}>
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all items',
-            }}
-          />
-        </TableCell>
+        {!props.hideCheckboxes && (
+          <TableCell 
+              padding="checkbox" 
+              sx={{
+                  backgroundColor: 'rgba(224, 224, 224, 1)',
+                  color: 'rgb(59 55 55 / 87%'
+              }}>
+            <Checkbox
+              color="primary"
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{
+                'aria-label': 'select all items',
+              }}
+            />
+          </TableCell>
+        )}
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -189,6 +191,7 @@ function EnhancedTable(props) {
     initialOrderBy,
     rowsPerPageOptions,
     densePadding,
+    hideCheckboxes // Add hideCheckboxes prop
   } = props;
 
   const [order, setOrder] = React.useState(initialOrder || 'asc');
@@ -278,6 +281,7 @@ function EnhancedTable(props) {
                 onRequestSort={handleRequestSort}
                 rowCount={data.length}
                 headCells={headCells}
+                hideCheckboxes={hideCheckboxes} // Pass hideCheckboxes prop to EnhancedTableHead
               />
               <TableBody>
                 {visibleRows.map((row, index) => {
@@ -295,15 +299,17 @@ function EnhancedTable(props) {
                       selected={isItemSelected}
                       sx={{ cursor: 'pointer' }}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
-                      </TableCell>
+                      {!hideCheckboxes && (
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              'aria-labelledby': labelId,
+                            }}
+                          />
+                        </TableCell>
+                      )}
                       {headCells.map((cell) => (
                         <TableCell
                           key={cell.id}
@@ -321,7 +327,7 @@ function EnhancedTable(props) {
                       height: (dense ? 33 : 53) * emptyRows,
                     }}
                   >
-                    <TableCell colSpan={headCells.length + 1} />
+                    <TableCell colSpan={headCells.length + (hideCheckboxes ? 0 : 1)} />
                   </TableRow>
                 )}
               </TableBody>
@@ -360,7 +366,7 @@ function EnhancedTable(props) {
     initialOrderBy: PropTypes.string,
     rowsPerPageOptions: PropTypes.arrayOf(PropTypes.number),
     densePadding: PropTypes.bool,
+    hideCheckboxes: PropTypes.bool, // Add hideCheckboxes prop
   };
   
   export default EnhancedTable;
-  

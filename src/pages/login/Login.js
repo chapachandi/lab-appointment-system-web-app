@@ -60,8 +60,9 @@ const Login = () => {
       })
       .then((user) => {
         // Dispatch the userId to the Redux store
-        dispatch(login({ id: user.data.userId, isAuthenticated: true }));
-        console.log(user.data.userId)
+        dispatch(login({ id: user.data.id, isAuthenticated: true }));
+        console.log(user.data.id,'.....................................')
+        console.log(user,'*********************')
         // Handle successful login (e.g., redirect to dashboard)
         console.log('Login successful:', user);
         navigate('/home'); // Redirect to the dashboard
@@ -159,7 +160,6 @@ const Login = () => {
 
               <Typography variant="body2" className="paragraph">
               Don't have an account?{' '}
-                {/* Use React Router's Link to navigate to the login page */}
                 <MuiLink component={ReactRouterLink} to="/registration" className="signInLink">
                 Sign Up
                 </MuiLink>

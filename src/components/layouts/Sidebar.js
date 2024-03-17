@@ -1,6 +1,7 @@
 // Sidebar.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,6 +14,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { logout } from '../../app/store/authSlice';
 
 import './style.css';
 import Logo from '../../assets/images (1).png'; 
@@ -40,10 +43,16 @@ const pages = [
 export default function Sidebar() {
   const [selectedPage, setSelectedPage] = useState('/dashboard');
   const navigate = useNavigate();
+  const dispatch = useDispatch(); 
 
   const handlePageChange = (path) => {
     setSelectedPage(path.replace('/home', '')); 
     navigate(path);
+  };
+   
+   const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
   };
 
   return (
@@ -102,6 +111,19 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
           ))}
+           {/* Add logout button */}
+           <ListItem
+            disablePadding
+            onClick={handleLogout}
+            sx={{ mt: 'auto', cursor: 'pointer' }}
+          >
+            <ListItemButton>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItemButton>
+          </ListItem>
         </List>
         <Divider />
       </Drawer>
